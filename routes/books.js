@@ -4,6 +4,7 @@ const {
   getBooks,
   createBook,
   deleteBook,
+  updateBook,
 } = require("../controller/booksController");
 
 router.get("/", getBooks);
@@ -11,5 +12,7 @@ router.get("/", getBooks);
 router.post("/", createBook);
 
 router.delete("/:bookId", deleteBook);
+
+router.put("/:bookId", updateBook);
 
 module.exports = router;
