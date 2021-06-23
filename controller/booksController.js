@@ -1,52 +1,57 @@
-const slugify = require("slugify");
 const { Book } = require("../db/models");
 
-exports.getBooks = async (req, res) => {
+exports.getBooks = async (req, res, next) => {
   try {
     const booksData = await Book.findAll({
       attributes: { exclude: ["createdAt", "updatedAt"] },
     });
     res.json(booksData);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
-exports.createBook = async (req, res) => {
+exports.createBook = async (req, res, next) => {
   try {
     const newBook = await Book.create(req.body);
     res.status(201).json(newBook);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
-exports.deleteBook = async (req, res) => {
-  const { bookId } = req.params;
+exports.fetchBook = async (bookId, next) => {
   try {
-    const foundBook = await Book.findByPk(bookId);
-    if (foundBook) {
-      await foundBook.destroy();
-      res.status(204).end();
-    } else {
-      res.status(404).json({ message: "book does not exist" });
-    }
+    const foundBook = await Book.findByPk(bookId); //2
+    return foundBook;
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
-exports.updateBook = async (req, res) => {
-  const { bookId } = req.params;
+exports.deleteBook = async (req, res, next) => {
   try {
-    const foundBook = await Book.findByPk(bookId);
-    if (foundBook) {
-      await foundBook.update(req.body);
-      res.status(204).end();
-    } else {
-      res.status(404).json({ message: "book does not exist" });
-    }
+    await req.book.destroy();
+    res.status(204).end();
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
+
+exports.updateBook = async (req, res, next) => {
+  try {
+    await req.book.update(req.body);
+    res.status(201).json(req.book);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// exports.bookDetails = async (req,res,next)=>{
+//   try{
+//     res.status(201).json(req.book).end()
+//   }
+//   catch(error){
+//     next(error);
+//   }
+// }
