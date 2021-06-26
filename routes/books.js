@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router();
+const upload = require("../middleware/multer");
 const {
   getBooks,
   createBook,
@@ -7,6 +7,8 @@ const {
   updateBook,
   fetchBook,
 } = require("../controller/booksController");
+
+const router = express.Router();
 
 router.param("bookId", async (req, res, next, bookId) => {
   const book = await fetchBook(bookId, next);
@@ -22,10 +24,10 @@ router.param("bookId", async (req, res, next, bookId) => {
 
 router.get("/", getBooks);
 
-router.post("/", createBook);
+router.post("/", upload.single("img"), createBook); /// img is the name of the field in the model
 
 router.delete("/:bookId", deleteBook);
 
-router.put("/:bookId", updateBook);
+router.put("/:bookId", upload.single("img"), updateBook);
 
 module.exports = router;
