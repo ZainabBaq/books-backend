@@ -24,8 +24,6 @@ router.param("bookId", async (req, res, next, bookId) => {
 
 router.get("/", getBooks);
 
-router.post("/", upload.single("img"), createBook); /// img is the name of the field in the model
-
 router.delete("/:bookId", deleteBook);
 
 router.put("/:bookId", upload.single("img"), updateBook);

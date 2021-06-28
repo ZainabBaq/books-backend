@@ -26,5 +26,20 @@ module.exports = (sequelize, DataTypes) => {
   SequelizeSlugify.slugifyModel(Book, {
     source: ["name"],
   });
+
+  // Relations
+  Book.associate = (models) => {
+    // Library has many Book
+    models.Library.hasMany(Book, {
+      foreignKey: "libraryId", // Change the column name from LibraryId => libraryId
+      as: "books", // The alias of this relation
+      allowNull: false,
+    });
+    Book.belongsTo(models.Library, {
+      foreignKey: "libraryId",
+      as: "library",
+    });
+  };
+
   return Book;
 };

@@ -1,4 +1,4 @@
-const { Book } = require("../db/models");
+const { Book, Library } = require("../db/models");
 
 exports.getBooks = async (req, res, next) => {
   try {
@@ -6,22 +6,6 @@ exports.getBooks = async (req, res, next) => {
       attributes: { exclude: ["createdAt", "updatedAt"] },
     });
     res.json(booksData);
-  } catch (error) {
-    next(error);
-  }
-};
-
-exports.createBook = async (req, res, next) => {
-  console.log(
-    "🚀 ~ file: booksController.js ~ line 15 ~ exports.createBook= ~ req",
-    req.file
-  );
-  try {
-    if (req.file) {
-      req.body.img = `http://${req.get("host")}/${req.file.path}`;
-    }
-    const newBook = await Book.create(req.body);
-    res.status(201).json(newBook);
   } catch (error) {
     next(error);
   }

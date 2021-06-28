@@ -1,5 +1,6 @@
 const express = require("express");
 const books = require("./routes/books");
+const libraries = require("./routes/libraries");
 
 const cors = require("cors");
 const path = require("path");
@@ -11,6 +12,7 @@ app.use(express.json());
 
 // Routes
 app.use("/books", books);
+app.use("/libraries", libraries);
 app.use("/media", express.static("media"));
 app.use("/media", express.static(path.join(__dirname, "media")));
 
