@@ -1,16 +1,18 @@
 const express = require("express");
 const books = require("./routes/books");
 const libraries = require("./routes/libraries");
-
+const users = require("./routes/users");
 const cors = require("cors");
 const path = require("path");
 
 const app = express();
+
 // Midleware
 app.use(cors());
 app.use(express.json());
 
 // Routes
+app.use(users);
 app.use("/books", books);
 app.use("/libraries", libraries);
 app.use("/media", express.static("media"));
