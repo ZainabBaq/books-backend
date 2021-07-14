@@ -1,6 +1,13 @@
-const LocalStrategy = require("passport-local").Strategy;
-const { User } = require("../db/models");
 const bcrypt = require("bcrypt");
+const LocalStrategy = require("passport-local").Strategy;
+const JWTStrategy = require("passport-jwt").Strategy;
+const { fromAuthHeaderAsBearerToken } = require("passport-jwt").ExtractJwt;
+
+// Keys
+const { JWT_SECRET } = require("../config/keys");
+
+// Models
+const { User } = require("../db/models");
 
 exports.localStrategy = new LocalStrategy(async (username, password, done) => {
   try {
@@ -18,3 +25,19 @@ exports.localStrategy = new LocalStrategy(async (username, password, done) => {
     done(error);
   }
 });
+
+exports.jwtStrategy = new JWTStrategy(
+  {
+    jwtFromRequest: fromAuthHeaderAsBearerToken(),
+    secretOrKey: JWT_SECRET,
+  },
+  async (payload, done) => {
+    if (Date.now() > payload.exp) return done(false);
+    const user = await User.findOne({
+      where: {
+        username: payload.username,
+      },
+    });
+    return done(null, user);
+  }
+);

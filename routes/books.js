@@ -7,12 +7,16 @@ const {
   updateBook,
   fetchBook,
 } = require("../controller/booksController");
+const { fetchLibrary } = require("../controller/librariesController");
+const passport = require("passport");
 
 const router = express.Router();
 
 router.param("bookId", async (req, res, next, bookId) => {
   const book = await fetchBook(bookId, next);
   if (book) {
+    const library = await fetchLibrary(book.libraryId, next);
+    req.library = library;
     req.book = book;
     next();
   } else {
@@ -24,8 +28,17 @@ router.param("bookId", async (req, res, next, bookId) => {
 
 router.get("/", getBooks);
 
-router.delete("/:bookId", deleteBook);
+router.delete(
+  "/:bookId",
+  passport.authenticate("jwt", { session: false }),
+  deleteBook
+);
 
-router.put("/:bookId", upload.single("img"), updateBook);
+router.put(
+  "/:bookId",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("img"),
+  updateBook
+);
 
 module.exports = router;

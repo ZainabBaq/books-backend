@@ -22,6 +22,11 @@ exports.fetchBook = async (bookId, next) => {
 
 exports.deleteBook = async (req, res, next) => {
   try {
+    if (req.library.userId !== req.user.id)
+      throw {
+        status: 401,
+        message: "You can't delete a book that's not yours!",
+      };
     await req.book.destroy();
     res.status(204).end();
   } catch (error) {
@@ -31,6 +36,11 @@ exports.deleteBook = async (req, res, next) => {
 
 exports.updateBook = async (req, res, next) => {
   try {
+    if (req.library.userId !== req.user.id)
+      throw {
+        status: 401,
+        message: "You can't update a book that's not yours!",
+      };
     if (req.file) {
       req.body.img = `http://${req.get("host")}/${req.file.path}`;
     }

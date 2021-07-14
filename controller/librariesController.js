@@ -7,7 +7,6 @@ exports.getLibraries = async (req, res, next) => {
       include: {
         model: Book,
         as: "books", // alias
-        attributes: ["id"],
       },
     });
     res.json(librariesData);
@@ -21,6 +20,7 @@ exports.createLibrary = async (req, res, next) => {
     if (req.file) {
       req.body.img = `http://${req.get("host")}/${req.file.path}`;
     }
+    req.body.userId = req.user.id;
     const newLibrary = await Library.create(req.body);
     res.status(201).json(newLibrary);
   } catch (error) {
@@ -39,6 +39,12 @@ exports.fetchLibrary = async (libraryId, next) => {
 
 exports.createBook = async (req, res, next) => {
   try {
+    if (req.library.userId !== req.user.id) {
+      throw {
+        status: 401,
+        message: "You can't add books to a library that's not yours!",
+      };
+    }
     if (req.file) {
       req.body.img = `http://${req.get("host")}/${req.file.path}`;
     }

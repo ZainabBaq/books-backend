@@ -17,5 +17,10 @@ module.exports = (sequelize, DataTypes) => {
     source: ["name"],
   });
 
+  Library.associate = (models) => {
+    models.User.hasMany(Library, { foreignKey: "userId", allowNull: false });
+    Library.belongsTo(models.User, { foreignKey: "userId" });
+  };
+
   return Library;
 };

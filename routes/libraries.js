@@ -1,4 +1,5 @@
 const express = require("express");
+const passport = require("passport");
 const upload = require("../middleware/multer");
 const {
   getLibraries,
@@ -23,9 +24,19 @@ router.param("libraryId", async (req, res, next, libraryId) => {
 
 router.get("/", getLibraries);
 
-router.post("/", upload.single("img"), createLibrary); /// img is the name of the field in the model
+router.post(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("img"),
+  createLibrary
+); /// img is the name of the field in the model
 
-router.post("/:libraryId/books", upload.single("img"), createBook); /// img is the name of the field in the model
+router.post(
+  "/:libraryId/books",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("img"),
+  createBook
+); /// img is the name of the field in the model
 
 // router.delete("/:libraryId", deleteLibrary);
 
